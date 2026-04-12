@@ -6,6 +6,7 @@ import 'package:digital_delta/core/services/mesh_service.dart';
 import 'package:digital_delta/core/services/crdt_service.dart';
 import 'package:digital_delta/features/mesh/screens/conflict_resolution_screen.dart';
 import 'package:digital_delta/features/mesh/screens/mesh_chat_screen.dart';
+import 'package:digital_delta/features/mesh/screens/system_logs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -434,6 +435,18 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                         ),
                       ),
                     ),
+            ),
+            const SizedBox(height: 8),
+            _actionButton(
+              icon: Icons.history,
+              label: 'View All Persistent Logs',
+              color: const Color(0xFF0B1F33).withOpacity(0.8),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SystemLogsScreen()),
+                );
+              },
             ),
 
             const SizedBox(height: 32),
