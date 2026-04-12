@@ -1,3 +1,4 @@
+import 'package:digital_delta/features/auth/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -183,7 +184,13 @@ class LoginScreen extends StatelessWidget {
                         width: double.infinity,
                         height: 50,
                         child: OutlinedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            // go to login screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                            ); 
+                          },
                           style: OutlinedButton.styleFrom(
                             backgroundColor: const Color(0xFFE2E8F0),
                             side: BorderSide.none,
