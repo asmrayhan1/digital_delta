@@ -19,6 +19,7 @@ class AuthService {
     );
   }
 
+
   // M1.2 & Registration
   Future<String?> registerUser(
     String user,

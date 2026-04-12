@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package mesh;
+
+enum EntryType {
+  MESSAGE = 0;
+  POST = 1;
+}
+
+// ─── Existing Ledger Entry ───
+message LedgerEntry {
+  string id = 1;
+  EntryType type = 2;
+  bytes payload = 3;
+  string sender_id = 4;
+  string receiver_id = 5;
+  int64 timestamp = 6;
+  string prev_hash = 7;
+  string current_hash = 8;
+}
+
+message SyncRequest {
+  string last_known_hash = 1;
+}
+
+message SyncResponse {
+  repeated LedgerEntry entries = 1;
+}
+
+service MeshSyncService {
+  rpc GetUpdates(SyncRequest) returns (SyncResponse);
+}
+
+// ─── Vector Clock (M2.2) ───
+message VectorClock {
+  map<string, int64> clocks = 1;
+}
+
+// ─── CRDT LWW-Register Entry (M2.1) ───
+message CrdtEntry {
+  string id = 1;
+  string field_name = 2;
+  string value = 3;
+  int64 hlc_timestamp = 4;
+  string node_id = 5;
+  VectorClock vector_clock = 6;
+}
+
+// ─── CRDT Sync (M2.3) ───
+message CrdtSyncRequest {
+  VectorClock sender_clock = 1;
+}
+
+message CrdtSyncResponse {
+  repeated CrdtEntry entries = 1;
+  VectorClock sender_clock = 2;
+}
+
+// ─── Mesh Message for Store-and-Forward (M3.1) ───
+message MeshMessage {
+  string message_id = 1;
+  string source_id = 2;
+  string destination_id = 3;
+  bytes encrypted_payload = 4;
+  int32 ttl = 5;
+  repeated string hop_list = 6;
+  int64 created_at = 7;
+  bytes sender_public_key = 8;
+}
+
+// ─── Node Info for Dual-Role (M3.2) ───
+message NodeInfo {
+  string node_id = 1;
+  string device_name = 2;
+  string role = 3;
+  int32 battery_level = 4;
+  int32 signal_strength = 5;
+  bytes public_key = 6;
+}
+
+// ─── Envelope wrapping all mesh payloads ───
+message MeshEnvelope {
+  enum PayloadType {
+    SYNC_REQUEST = 0;
+    SYNC_RESPONSE = 1;
+    MESH_MESSAGE = 2;
+    NODE_INFO = 3;
+    CRDT_SYNC_REQUEST = 4;
+    CRDT_SYNC_RESPONSE = 5;
+  }
+  PayloadType type = 1;
+  bytes data = 2;
+}
