@@ -1,5 +1,6 @@
-import 'package:digital_delta/map/services/map_provider.dart';
-import 'package:digital_delta/map/visuals/map_screen.dart';
+import 'package:digital_delta/mapupdated/data/sylhet_map_data.dart';
+import 'package:digital_delta/mapupdated/providers/map_provider.dart';
+import 'package:digital_delta/mapupdated/widgets/map_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../assets/screens/assets_screen.dart';
@@ -21,7 +22,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> screens = [
     DashboardScreen(),
     AssetsScreen(),
-    MapScreen(provider: MapProvider()),
+    MapScreen(provider: MapProvider(), rawJson: SylhetMapData.jsonString,),
     SyncScreen(),
     ProfileScreen(),
   ];
