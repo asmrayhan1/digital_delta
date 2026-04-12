@@ -13,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
-
+  final authService = AuthService();
   bool _isLoading = false;
 
   final AuthService _authService = AuthService();

@@ -4,10 +4,41 @@ import 'package:cryptography/cryptography.dart';
 import 'package:digital_delta/data/local/db_helper.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:otp/otp.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final _storage = const FlutterSecureStorage();
   final _dbHelper = DbHelper();
+
+  // Keys for Shared Preferences
+  static const String _keyLoggedIn = "isLoggedIn";
+  static const String _keyUserMobile = "userMobile";
+  static const String _keyRole = "userRole";
+
+  // --- Session Management ---
+
+  /// Internal helper to set session data
+  Future<void> _setSession(String mobile, String role) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyLoggedIn, true);
+    await prefs.setString(_keyUserMobile, mobile);
+    await prefs.setString(_keyRole, role);
+  }
+
+  /// Check if a user is currently logged in
+  Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyLoggedIn) ?? false;
+  }
+
+  /// Logout and clear session
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? mobile = prefs.getString(_keyUserMobile);
+    
+    await prefs.clear(); // Clears all login flags
+    await logEvent("LOGOUT_SUCCESS_${mobile ?? 'unknown'}");
+  }
 
   // M1.1: OTP Generation (TOTP)
   String generateOTP(String secret) {
@@ -18,6 +49,7 @@ class AuthService {
       length: 6,
     );
   }
+
 
   // M1.2 & Registration
   Future<String?> registerUser(
@@ -56,6 +88,7 @@ class AuthService {
       });
 
       await logEvent("REGISTER_SUCCESS_$user");
+      await _setSession(mobile, role);
       return null;
     } catch (e) {
       // Check if the error is a Unique Constraint violation
@@ -65,6 +98,22 @@ class AuthService {
         }
       }
       return "An unexpected error occurred: $e";
+    }
+  }
+
+  /// Call this when the final OTP/Password check passes
+  Future<void> finalizeLogin(String mobile) async {
+    final db = await _dbHelper.db;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'users',
+      where: 'mobile = ?',
+      whereArgs: [mobile],
+    );
+
+    if (maps.isNotEmpty) {
+      String role = maps.first['role'];
+      await _setSession(mobile, role);
+      await logEvent("LOGIN_FINALIZED_$mobile");
     }
   }
 

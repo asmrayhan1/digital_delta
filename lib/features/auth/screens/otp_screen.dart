@@ -84,6 +84,8 @@ class _OtpScreenState extends State<OtpScreen> {
         // Initialize E2E encryption keys
         await EncryptionService.generateAndStoreKeyPair(widget.mobile);
 
+        await _auth.finalizeLogin(widget.mobile);
+
         // Create mesh manager
         final meshManager = MeshSyncManager(
           userId: widget.mobile,
