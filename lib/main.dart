@@ -1,5 +1,4 @@
 import 'package:digital_delta/core/theme/app_theme.dart';
-import 'package:digital_delta/features/auth/screens/login_screen.dart';
 import 'package:digital_delta/features/auth/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 

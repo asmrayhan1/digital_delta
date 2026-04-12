@@ -1,9 +1,62 @@
+import 'package:digital_delta/core/services/auth_service.dart';
+import 'package:digital_delta/features/auth/screens/otp_screen.dart';
 import 'package:digital_delta/features/auth/screens/register_screen.dart';
-import 'package:digital_delta/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+
+  bool _isLoading = false;
+
+  final AuthService _authService = AuthService();
+
+  Future<void> _handleLogin() async {
+    final username = _usernameController.text.trim();
+    final pass = _passController.text.trim();
+
+    if (username.isEmpty || pass.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("All fields are required")));
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final isValid = await _authService.verifyPassword(username, pass);
+
+      if (mounted) {
+        // Navigate to Login after registration
+        if (isValid) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const OtpScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("An Error Occured")));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +99,7 @@ class LoginScreen extends StatelessWidget {
 
               // Username Field
               const Text(
-                'USERNAME OR EMAIL',
+                'USERNAME',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -56,8 +109,10 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: _usernameController,
                 decoration: InputDecoration(
-                  hintText: 'Operator ID',
+                  hintText: 'e.g. delta_commander',
+                  hintStyle: const TextStyle(color: Color(0xFFA0AEC0)),
                   prefixIcon: const Icon(Icons.person_outline),
                   filled: true,
                   fillColor: const Color(0xFFF3F4F6),
@@ -97,9 +152,11 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
               TextField(
+                controller: _passController,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: '••••••••',
+                  hintStyle: const TextStyle(color: Color(0xFFA0AEC0)),
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: const Icon(Icons.visibility),
                   filled: true,
@@ -144,32 +201,21 @@ class LoginScreen extends StatelessWidget {
               // Login Button
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 52,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                    );
-                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0D1B2E),
+                    backgroundColor: const Color(0xFF0B1F33),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 4,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        'Login',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Icons.login, color: Colors.white),
-                    ],
-                  ),
+                  onPressed: _isLoading ? null : _handleLogin,
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          "Login",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                 ),
               ),
 
