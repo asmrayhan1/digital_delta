@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digital_delta/core/services/mesh_service.dart';
 import 'package:digital_delta/core/services/crdt_service.dart';
 import 'package:digital_delta/features/mesh/screens/conflict_resolution_screen.dart';
 import 'package:digital_delta/features/mesh/screens/mesh_chat_screen.dart';
+import 'package:digital_delta/features/mesh/screens/system_logs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -61,7 +61,8 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
 
   /// Request all runtime permissions needed by nearby_connections
   Future<bool> _requestPermissions() async {
-    if (!Platform.isAndroid) return true; // Default true for non-Android testing
+    if (!Platform.isAndroid)
+      return true; // Default true for non-Android testing
 
     final androidInfo = await DeviceInfoPlugin().androidInfo;
     final sdkInt = androidInfo.version.sdkInt;
@@ -87,10 +88,7 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
       ];
     } else {
       // Android 11 and lower
-      permissions = [
-        Permission.bluetooth,
-        Permission.location,
-      ];
+      permissions = [Permission.bluetooth, Permission.location];
     }
 
     Map<Permission, PermissionStatus> statuses = await permissions.request();
@@ -100,7 +98,10 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
     statuses.forEach((permission, status) {
       if (!status.isGranted) {
         allGranted = false;
-        _logs.insert(0, '[${_timeStr()}] ⚠ ${permission.toString().split('.').last} not granted');
+        _logs.insert(
+          0,
+          '[${_timeStr()}] ⚠ ${permission.toString().split('.').last} not granted',
+        );
       }
     });
 
@@ -154,7 +155,10 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
               child: Text(
                 _currentRole,
                 style: const TextStyle(
-                    fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -167,6 +171,10 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
           children: [
             // ─── Connection Controls ───
             _sectionTitle('Connection', Icons.bluetooth_connected),
+            Text(
+              'Please turn on Bluetooth, Wifi and Location services to connect with nearby devices.',
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -174,7 +182,9 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                   child: _actionButton(
                     icon: Icons.cell_tower,
                     label: _isAdvertising ? 'Stop Advertise' : 'Advertise',
-                    color: _isAdvertising ? Colors.red : const Color(0xFF2EC4B6),
+                    color: _isAdvertising
+                        ? Colors.red
+                        : const Color(0xFF2EC4B6),
                     onTap: () async {
                       if (_isAdvertising) {
                         await _mesh.stopAll();
@@ -196,7 +206,9 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                   child: _actionButton(
                     icon: Icons.search,
                     label: _isDiscovering ? 'Stop Discovery' : 'Discover',
-                    color: _isDiscovering ? Colors.red : const Color(0xFF3A86FF),
+                    color: _isDiscovering
+                        ? Colors.red
+                        : const Color(0xFF3A86FF),
                     onTap: () async {
                       if (_isDiscovering) {
                         await _mesh.stopAll();
@@ -250,8 +262,7 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              MeshChatScreen(meshManager: _mesh),
+                          builder: (_) => MeshChatScreen(meshManager: _mesh),
                         ),
                       );
                     },
@@ -269,9 +280,8 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ConflictResolutionScreen(
-                            meshManager: _mesh,
-                          ),
+                          builder: (_) =>
+                              ConflictResolutionScreen(meshManager: _mesh),
                         ),
                       );
                     },
@@ -307,7 +317,9 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                               borderSide: BorderSide.none,
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 10),
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
                           ),
                         ),
                       ),
@@ -324,7 +336,9 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                               borderSide: BorderSide.none,
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 10),
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
                           ),
                         ),
                       ),
@@ -351,8 +365,10 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                     future: _mesh.crdtService.getAllFields(),
                     builder: (_, snap) {
                       if (!snap.hasData || snap.data!.isEmpty) {
-                        return const Text('No inventory items.',
-                            style: TextStyle(color: Colors.grey));
+                        return const Text(
+                          'No inventory items.',
+                          style: TextStyle(color: Colors.grey),
+                        );
                       }
                       return Column(
                         children: snap.data!.map((e) {
@@ -368,7 +384,9 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                             trailing: Text(
                               e['value'] as String? ?? '',
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           );
                         }).toList(),
@@ -395,12 +413,13 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                 _mesh.vcService.clock.isEmpty
                     ? '{ empty }'
                     : _mesh.vcService.clock.entries
-                        .map((e) => '${e.key}: ${e.value}')
-                        .join('\n'),
+                          .map((e) => '${e.key}: ${e.value}')
+                          .join('\n'),
                 style: const TextStyle(
-                    color: Color(0xFF2EC4B6),
-                    fontFamily: 'monospace',
-                    fontSize: 13),
+                  color: Color(0xFF2EC4B6),
+                  fontFamily: 'monospace',
+                  fontSize: 13,
+                ),
               ),
             ),
 
@@ -419,8 +438,11 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
               ),
               child: _logs.isEmpty
                   ? const Center(
-                      child: Text('No events yet.',
-                          style: TextStyle(color: Colors.white38)))
+                      child: Text(
+                        'No events yet.',
+                        style: TextStyle(color: Colors.white38),
+                      ),
+                    )
                   : ListView.builder(
                       itemCount: _logs.length,
                       itemBuilder: (_, i) => Padding(
@@ -428,12 +450,25 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
                         child: Text(
                           _logs[i],
                           style: const TextStyle(
-                              color: Colors.white70,
-                              fontFamily: 'monospace',
-                              fontSize: 11),
+                            color: Colors.white70,
+                            fontFamily: 'monospace',
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ),
+            ),
+            const SizedBox(height: 8),
+            _actionButton(
+              icon: Icons.history,
+              label: 'View All Persistent Logs',
+              color: const Color(0xFF0B1F33).withOpacity(0.8),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SystemLogsScreen()),
+                );
+              },
             ),
 
             const SizedBox(height: 32),
@@ -448,11 +483,14 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
       children: [
         Icon(icon, size: 18, color: const Color(0xFF0B1F33)),
         const SizedBox(width: 8),
-        Text(title,
-            style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0B1F33))),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0B1F33),
+          ),
+        ),
       ],
     );
   }
@@ -476,11 +514,14 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
             children: [
               Icon(icon, color: Colors.white, size: 18),
               const SizedBox(width: 6),
-              Text(label,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13)),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
             ],
           ),
         ),
@@ -524,11 +565,11 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text('$role • Battery: $battery%',
-                    style:
-                        const TextStyle(color: Colors.grey, fontSize: 12)),
+                Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  '$role • Battery: $battery%',
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -553,9 +594,11 @@ class _MeshDashboardScreenState extends State<MeshDashboardScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.grey)),
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: Colors.grey),
+      ),
     );
   }
 }
