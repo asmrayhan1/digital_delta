@@ -1,3 +1,5 @@
+import 'package:digital_delta/core/services/mesh_service.dart';
+import 'package:digital_delta/features/mesh/screens/mesh_dashboard_screen.dart';
 import 'package:digital_delta/mapupdated/data/sylhet_map_data.dart';
 import 'package:digital_delta/mapupdated/providers/map_provider.dart';
 import 'package:digital_delta/mapupdated/widgets/map_screen.dart';
@@ -9,7 +11,8 @@ import '../../profile/screens/profile_screen.dart';
 import '../../sync/screens/sync_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({super.key});
+  final String mobile;
+  const MainNavigationScreen({super.key, required this.mobile});
 
   @override
   State<MainNavigationScreen> createState() =>
@@ -18,14 +21,28 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int currentIndex = 0;
+  late MeshSyncManager meshManager; // Initialize once
+  late List<Widget> screens;
 
-  final List<Widget> screens = [
-    DashboardScreen(),
-    AssetsScreen(),
-    MapScreen(provider: MapProvider(), rawJson: SylhetMapData.jsonString,),
-    SyncScreen(),
-    ProfileScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    
+    // Create the manager instance once
+    meshManager = MeshSyncManager(
+      userId: widget.mobile,
+      deviceName: 'Device_${widget.mobile.substring(widget.mobile.length - 4)}',
+    );
+
+    // Initialize screens with the persistent manager
+    screens = [
+      const DashboardScreen(),
+      const AssetsScreen(),
+      MapScreen(provider: MapProvider(), rawJson: SylhetMapData.jsonString),
+      MeshDashboardScreen(meshManager: meshManager), // Pass the manager here
+      const ProfileScreen(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +50,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       backgroundColor: const Color(0xFFF2F4F7),
 
       /// BODY
-      body: screens[currentIndex],
+      body: IndexedStack(
+        index: currentIndex,
+        children: screens,
+      ),
 
       /// BOTTOM NAV
       bottomNavigationBar: Container(
