@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   // 1. Controllers for form data
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
   // M1.3: RBAC Role selection state
@@ -32,6 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // 3. The Registration Logic
   Future<void> _handleRegister() async {
     final username = _usernameController.text.trim();
+    final mobile = _mobileController.text.trim();
     final pass = _passController.text.trim();
 
     if (username.isEmpty || pass.isEmpty) {
@@ -45,20 +47,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       // Calls M1.1 (OTP), M1.2 (Keys), and M1.4 (Audit Log)
-      await _authService.registerUser(username, pass, _selectedRole);
+      final String? errorMessage = await _authService.registerUser(
+        username,
+        mobile,
+        pass,
+        _selectedRole,
+      );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text("Identity Provisioned Successfully"),
-          ),
-        );
-        // Navigate to Login after registration
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
+        if (errorMessage == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.green,
+              content: Text("Account created!"),
+            ),
+          );
+          // Navigate to Login after registration
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              content: Text(errorMessage),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -245,6 +261,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       icon: Icons.person,
                     ),
 
+                    const SizedBox(height: 14),
+
+                    /// PASSWORD
+                    _inputField(
+                      controller: _mobileController,
+                      hint: "Enter Mobile No.",
+                      icon: Icons.phone,
+                      isPassword: false,
+                    ),
                     const SizedBox(height: 14),
 
                     /// PASSWORD

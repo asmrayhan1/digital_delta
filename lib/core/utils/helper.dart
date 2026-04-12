@@ -17,7 +17,7 @@ Future<void> debugPrintUsers() async {
 
   for (var user in users) {
     print(
-      "ID: ${user['id']} | Username: ${user['username']} | Role: ${user['role']} | Public Key: ${user['public_key']}",
+      "ID: ${user['id']} | Username: ${user['username']} | Role: ${user['role']} | Mobile: ${user['mobile']}",
     );
   }
 }

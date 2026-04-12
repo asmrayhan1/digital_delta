@@ -7,7 +7,6 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F4F7),
-      bottomNavigationBar: _bottomNav(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -34,7 +33,7 @@ class ProfileScreen extends StatelessWidget {
                   Text(
                     "Syncing • 2m ago",
                     style: TextStyle(color: Colors.grey),
-                  )
+                  ),
                 ],
               ),
 
@@ -85,10 +84,13 @@ class ProfileScreen extends StatelessWidget {
                               color: Color(0xFF2EC4B6),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.verified,
-                                size: 16, color: Colors.white),
+                            child: const Icon(
+                              Icons.verified,
+                              size: 16,
+                              color: Colors.white,
+                            ),
                           ),
-                        )
+                        ),
                       ],
                     ),
 
@@ -109,7 +111,9 @@ class ProfileScreen extends StatelessWidget {
                     /// ROLE
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF2EC4B6),
                         borderRadius: BorderRadius.circular(20),
@@ -162,8 +166,7 @@ class ProfileScreen extends StatelessWidget {
                 children: const [
                   Text(
                     "Active Permissions",
-                    style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text("3 Total", style: TextStyle(color: Colors.grey)),
                 ],
@@ -201,8 +204,7 @@ class ProfileScreen extends StatelessWidget {
               _securityItem(
                 icon: Icons.fingerprint,
                 title: "Biometric Authentication",
-                trailing: const Icon(Icons.check_circle,
-                    color: Colors.green),
+                trailing: const Icon(Icons.check_circle, color: Colors.green),
               ),
 
               _securityItem(
@@ -289,14 +291,9 @@ Widget _infoCard({
                 letterSpacing: 1,
               ),
             ),
-            Text(
-              value,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
-        )
+        ),
       ],
     ),
   );
@@ -332,15 +329,14 @@ Widget _permissionItem({
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
               Text(
                 subtitle,
                 style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),
-        )
+        ),
       ],
     ),
   );

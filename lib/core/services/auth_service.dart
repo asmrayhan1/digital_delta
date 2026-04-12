@@ -14,56 +14,78 @@ class AuthService {
     return OTP.generateTOTPCodeString(
       secret,
       DateTime.now().millisecondsSinceEpoch,
-      interval: 30,
+      interval: 60, // 60-second window
       length: 6,
     );
   }
 
   // M1.2 & Registration
-  Future<void> registerUser(String user, String pass, String role) async {
+  Future<String?> registerUser(
+    String user,
+    String mobile,
+    String pass,
+    String role,
+  ) async {
     // Generate Key Pair
     final algorithm = Ed25519();
     final keyPair = await algorithm.newKeyPair();
     final publicKey = (await keyPair.extractPublicKey()).toString();
     final privateKey = await keyPair.extractPrivateKeyBytes();
-    
+
     // OTP
     final otpSecret = OTP.randomSecret(); // Base32 string
 
     // Secure Storage
-    await _storage.write(key: '${user}_otp_secret', value: otpSecret);
-    await _storage.write(key: '${user}_pass', value: pass);
-    await _storage.write(key: '${user}_priv_key', value: privateKey.toString());
+    await _storage.write(key: '${mobile}_otp_secret', value: otpSecret);
+    await _storage.write(key: '${mobile}_pass', value: pass);
+    await _storage.write(
+      key: '${mobile}_priv_key',
+      value: privateKey.toString(),
+    );
 
     // Save to SQLite
-    final db = await _dbHelper.db;
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
-    await db.insert('users', {
-      'id': id,
-      'username': user,
-      'role': role,
-      'public_key': publicKey,
-    });
+    try {
+      final db = await _dbHelper.db;
+      final id = DateTime.now().millisecondsSinceEpoch.toString();
+      await db.insert('users', {
+        'id': id,
+        'username': user,
+        'mobile': mobile,
+        'role': role,
+        'public_key': publicKey,
+      });
 
-    await logEvent("REGISTER_SUCCESS_$user");
+      await logEvent("REGISTER_SUCCESS_$user");
+      return null;
+    } catch (e) {
+      // Check if the error is a Unique Constraint violation
+      if (e.toString().contains('UNIQUE constraint failed')) {
+        if (e.toString().contains('users.mobile')) {
+          return "This mobile number is already registered.";
+        }
+      }
+      return "An unexpected error occurred: $e";
+    }
   }
 
-  Future<bool> verifyPassword(String user, String inputPass) async {
-    final storedPass = await _storage.read(key: '${user}_pass');
+  Future<bool> verifyPassword(String mobile, String inputPass) async {
+    final storedPass = await _storage.read(key: '${mobile}_pass');
     bool success = storedPass != null && storedPass == inputPass;
-    await logEvent(success ? "PWD_CHECK_PASS_$user" : "PWD_CHECK_FAIL_$user");
+    await logEvent(
+      success ? "PWD_CHECK_PASS_$mobile" : "PWD_CHECK_FAIL_$mobile",
+    );
     return success;
   }
 
-  Future<bool> verifyOTP(String user, String inputOtp) async {
-    final secret = await _storage.read(key: '${user}_otp_secret');
+  Future<bool> verifyOTP(
+    String mobile,
+    String expected,
+    String inputOtp,
+  ) async {
+    final secret = await _storage.read(key: '${mobile}_otp_secret');
     if (secret == null) return false;
-
-    // Generate local expected OTP (RFC 6238)
-    String expected = generateOTP(secret);
-
-    bool success = inputOtp == expected;
-    await logEvent(success ? "OTP_SUCCESS_$user" : "OTP_FAIL_$user");
+    bool success = expected == inputOtp;
+    await logEvent(success ? "OTP_SUCCESS_$mobile" : "OTP_FAIL_$mobile");
     return success;
   }
 
