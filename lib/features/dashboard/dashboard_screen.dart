@@ -30,8 +30,7 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.bar_chart,
-                              color: Color(0xFF2D6CDF)),
+                          const Icon(Icons.bar_chart, color: Color(0xFF2D6CDF)),
                           const SizedBox(width: 8),
                           Text(
                             "Digital Delta",
@@ -44,9 +43,8 @@ class DashboardScreen extends StatelessWidget {
                       ),
                       const Text(
                         "SYNCING • 2M AGO",
-                        style:
-                        TextStyle(color: Colors.grey, fontSize: 12),
-                      )
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                     ],
                   ),
 
@@ -58,28 +56,24 @@ class DashboardScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     "12 Active Deliveries",
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight:
-                                        FontWeight.bold),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   SizedBox(height: 6),
                                   Text(
                                     "Real-time logistics tracking active",
-                                    style: TextStyle(
-                                        color: Colors.grey),
+                                    style: TextStyle(color: Colors.grey),
                                   ),
                                 ],
                               ),
@@ -91,7 +85,7 @@ class DashboardScreen extends StatelessWidget {
                                 _iconBox(Icons.directions_boat),
                                 _iconBox(Icons.flight),
                               ],
-                            )
+                            ),
                           ],
                         ),
 
@@ -114,43 +108,6 @@ class DashboardScreen extends StatelessWidget {
                         ),
 
                         const SizedBox(height: 16),
-
-                        /// MAP IMAGE
-                        Container(
-                          height: width < 400 ? 120 : 140,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.circular(16),
-                          ),
-                          child: ClipRRect(
-                            borderRadius:
-                            BorderRadius.circular(16),
-                            child: Image.network(
-                              "https://images.unsplash.com/photo-1524666041070-9d87656c25bb",
-                              fit: BoxFit.cover,
-
-                              loadingBuilder:
-                                  (context, child, progress) {
-                                if (progress == null)
-                                  return child;
-                                return const Center(
-                                    child:
-                                    CircularProgressIndicator());
-                              },
-
-                              errorBuilder:
-                                  (context, error, stackTrace) {
-                                return Container(
-                                  color: Colors.grey[300],
-                                  child: const Center(
-                                    child: Icon(
-                                        Icons.image_not_supported),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -161,34 +118,28 @@ class DashboardScreen extends StatelessWidget {
                   _responsiveCard(
                     dark: true,
                     child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "System Alerts",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight:
-                                FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Icon(Icons.notifications,
-                                color: Colors.orange),
+                            Icon(Icons.notifications, color: Colors.orange),
                           ],
                         ),
                         const SizedBox(height: 16),
 
                         _alertBox(
                           title: "HIGH PRIORITY",
-                          subtitle:
-                          "Route blocked on B-12",
-                          desc:
-                          "Detour calculation in progress.",
+                          subtitle: "Route blocked on B-12",
+                          desc: "Detour calculation in progress.",
                           color: Colors.orange,
                           bg: const Color(0xFF5A2D00),
                         ),
@@ -197,10 +148,8 @@ class DashboardScreen extends StatelessWidget {
 
                         _alertBox(
                           title: "CONFLICT",
-                          subtitle:
-                          "Conflict detected in Sync",
-                          desc:
-                          "Node Delta-4 returning mismatched checksums.",
+                          subtitle: "Conflict detected in Sync",
+                          desc: "Node Delta-4 returning mismatched checksums.",
                           color: Colors.red,
                           bg: const Color(0xFF1C2A3A),
                         ),
@@ -213,52 +162,43 @@ class DashboardScreen extends StatelessWidget {
                   /// SUPPLY STATUS
                   _responsiveCard(
                     child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   "Supply Status",
                                   style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight:
-                                      FontWeight.bold),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 SizedBox(height: 4),
                                 Text(
                                   "Aggregate inventory levels",
-                                  style: TextStyle(
-                                      color: Colors.grey),
+                                  style: TextStyle(color: Colors.grey),
                                 ),
                               ],
                             ),
                             Container(
-                              padding:
-                              const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
-                                color: const Color(
-                                    0xFFE6F4F1),
-                                borderRadius:
-                                BorderRadius.circular(
-                                    20),
+                                color: const Color(0xFFE6F4F1),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: const Text(
                                 "MEDIUM",
                                 style: TextStyle(
-                                  color:
-                                  Color(0xFF2EC4B6),
+                                  color: Color(0xFF2EC4B6),
                                   fontSize: 11,
-                                  fontWeight:
-                                  FontWeight.bold,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -277,44 +217,37 @@ class DashboardScreen extends StatelessWidget {
                   /// NODE STATUS
                   _responsiveCard(
                     child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   "Node Status",
                                   style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight:
-                                      FontWeight.bold),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 SizedBox(height: 4),
                                 Text(
                                   "Mesh network connectivity",
-                                  style: TextStyle(
-                                      color: Colors.grey),
+                                  style: TextStyle(color: Colors.grey),
                                 ),
                               ],
                             ),
                             Container(
-                              padding:
-                              const EdgeInsets.all(10),
-                              decoration:
-                              const BoxDecoration(
+                              padding: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
                                 color: Color(0xFFE6F4F1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
                                 Icons.hub,
-                                color:
-                                Color(0xFF2EC4B6),
+                                color: Color(0xFF2EC4B6),
                               ),
                             ),
                           ],
@@ -324,34 +257,25 @@ class DashboardScreen extends StatelessWidget {
                           children: [
                             const Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment
-                                    .start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("18",
-                                      style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight:
-                                          FontWeight
-                                              .bold)),
+                                  Text(
+                                    "18",
+                                    style: TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                   Text("ACTIVE NODES"),
                                 ],
                               ),
                             ),
-                            Container(
-                              height: 40,
-                              width: 1,
-                              color: Colors.grey,
-                            ),
+                            Container(height: 40, width: 1, color: Colors.grey),
                             const Expanded(
                               child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.warning,
-                                      color:
-                                      Colors.red),
+                                  Icon(Icons.warning, color: Colors.red),
                                   SizedBox(width: 6),
                                   Text("2"),
                                 ],
@@ -428,11 +352,9 @@ Widget _statusTile({
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title),
-            Text(value,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold)),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
-        )
+        ),
       ],
     ),
   );
@@ -456,12 +378,14 @@ Widget _alertBox({
       children: [
         Text(title, style: TextStyle(color: color)),
         const SizedBox(height: 6),
-        Text(subtitle,
-            style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
-        Text(desc,
-            style: const TextStyle(color: Colors.white70)),
+        Text(
+          subtitle,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(desc, style: const TextStyle(color: Colors.white70)),
       ],
     ),
   );
@@ -472,13 +396,13 @@ Widget _supplyRow(String label, double value) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
-        mainAxisAlignment:
-        MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label),
-          Text("${(value * 100).toInt()}%",
-              style: const TextStyle(
-                  color: Color(0xFF2EC4B6))),
+          Text(
+            "${(value * 100).toInt()}%",
+            style: const TextStyle(color: Color(0xFF2EC4B6)),
+          ),
         ],
       ),
       const SizedBox(height: 6),
@@ -486,8 +410,7 @@ Widget _supplyRow(String label, double value) {
         value: value,
         minHeight: 6,
         backgroundColor: const Color(0xFFE5E7EB),
-        valueColor: const AlwaysStoppedAnimation(
-            Color(0xFF2EC4B6)),
+        valueColor: const AlwaysStoppedAnimation(Color(0xFF2EC4B6)),
       ),
     ],
   );

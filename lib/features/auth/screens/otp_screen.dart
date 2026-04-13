@@ -85,11 +85,13 @@ class _OtpScreenState extends State<OtpScreen> {
         // Initialize E2E encryption keys
         await EncryptionService.generateAndStoreKeyPair(widget.mobile);
 
+        final role = await _auth.getUserRole(widget.mobile) ?? 'unknown';
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             // builder: (_) => MeshDashboardScreen(meshManager: meshManager),
-            builder: (_) => MainNavigationScreen(mobile: widget.mobile),
+            builder: (_) => MainNavigationScreen(mobile: widget.mobile, role: role),
           ),
         );
       } else {

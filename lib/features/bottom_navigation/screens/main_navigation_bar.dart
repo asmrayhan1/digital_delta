@@ -2,22 +2,19 @@ import 'package:digital_delta/core/services/mesh_service.dart';
 import 'package:digital_delta/features/mesh/screens/mesh_dashboard_screen.dart';
 import 'package:digital_delta/mapupdated/data/sylhet_map_data.dart';
 import 'package:digital_delta/features/recover_rescue/screens/recover_rescue_screen.dart';
-import 'package:digital_delta/map/services/map_provider.dart' hide MapProvider;
-import 'package:digital_delta/map/visuals/map_screen.dart' hide MapScreen;
 import 'package:flutter/material.dart';
 import '../../dashboard/dashboard_screen.dart';
 import '../../profile/screens/profile_screen.dart';
-import 'package:digital_delta/mapupdated/data/sylhet_map_data.dart';
 import 'package:digital_delta/mapupdated/providers/map_provider.dart';
 import 'package:digital_delta/mapupdated/widgets/map_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   final String mobile;
-  const MainNavigationScreen({super.key, required this.mobile});
+  final String role;
+  const MainNavigationScreen({super.key, required this.mobile, required this.role});
 
   @override
-  State<MainNavigationScreen> createState() =>
-      _MainNavigationScreenState();
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
@@ -39,7 +36,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     screens = [
       const DashboardScreen(),
       const RecoveryRescueScreen(),
-      MapScreen(provider: MapProvider(), rawJson: SylhetMapData.jsonString),
+      MapScreen(provider: MapProvider(), rawJson: SylhetMapData.jsonString, userRole: widget.role),
       MeshDashboardScreen(meshManager: meshManager), // Pass the manager here
       const ProfileScreen(),
     ];
@@ -51,10 +48,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       backgroundColor: const Color(0xFFF2F4F7),
 
       /// BODY
-      body: IndexedStack(
-        index: currentIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: currentIndex, children: screens),
 
       /// BOTTOM NAV
       bottomNavigationBar: Container(
@@ -69,9 +63,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _navItem(icon: Icons.grid_view, index: 0),
-            _navItem(icon: Icons.inventory_2, index: 1),
-            _navItem(icon: Icons.map, index: 2),
-            _navItem(icon: Icons.sync, index: 3),
+            _navItem(icon: Icons.dashboard, index: 1),
+            _navItem(icon: Icons.location_pin, index: 2),
+            _navItem(icon: Icons.wifi, index: 3),
             _navItem(icon: Icons.person, index: 4),
           ],
         ),
@@ -95,15 +89,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isActive
-              ? const Color(0xFF0D2A47)
-              : Colors.transparent,
+          color: isActive ? const Color(0xFF0D2A47) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
-          icon,
-          color: isActive ? Colors.white : Colors.white54,
-        ),
+        child: Icon(icon, color: isActive ? Colors.white : Colors.white54),
       ),
     );
   }
@@ -119,11 +108,6 @@ class _PlaceholderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 22),
-      ),
-    );
+    return Center(child: Text(title, style: const TextStyle(fontSize: 22)));
   }
 }

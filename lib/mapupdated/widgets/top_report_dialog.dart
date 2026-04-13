@@ -4,8 +4,13 @@ import '../providers/map_provider.dart';
 
 class TopReportDialog extends StatelessWidget {
   final MapProvider provider;
+  final String userRole;
 
-  const TopReportDialog({super.key, required this.provider});
+  const TopReportDialog({
+    super.key,
+    required this.provider,
+    required this.userRole,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,12 @@ class TopReportDialog extends StatelessWidget {
                       final sourceName = provider.getNodeName(edge.source);
                       final targetName = provider.getNodeName(edge.target);
 
-                      return _buildReportItem(edge, sourceName, targetName);
+                      return _buildReportItem(
+                        context,
+                        edge,
+                        sourceName,
+                        targetName,
+                      );
                     },
                   );
                 },
@@ -68,7 +78,12 @@ class TopReportDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildReportItem(MapEdge edge, String source, String target) {
+  Widget _buildReportItem(
+    BuildContext context,
+    MapEdge edge,
+    String source,
+    String target,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -88,15 +103,28 @@ class TopReportDialog extends StatelessWidget {
             child: Row(
               children: [
                 _conditionChip(
+                  context,
                   edge,
                   "Normal",
                   Colors.green,
                   !edge.isFlooded && !edge.isCollapsed,
                 ),
                 const SizedBox(width: 8),
-                _conditionChip(edge, "Flooded", Colors.blue, edge.isFlooded),
+                _conditionChip(
+                  context,
+                  edge,
+                  "Flooded",
+                  Colors.blue,
+                  edge.isFlooded,
+                ),
                 const SizedBox(width: 8),
-                _conditionChip(edge, "Collapsed", Colors.red, edge.isCollapsed),
+                _conditionChip(
+                  context,
+                  edge,
+                  "Collapsed",
+                  Colors.red,
+                  edge.isCollapsed,
+                ),
               ],
             ),
           ),
@@ -106,6 +134,7 @@ class TopReportDialog extends StatelessWidget {
   }
 
   Widget _conditionChip(
+    BuildContext context,
     MapEdge edge,
     String label,
     Color color,
@@ -120,6 +149,17 @@ class TopReportDialog extends StatelessWidget {
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
       onSelected: (selected) {
+        bool isFieldAgent = userRole.toLowerCase().contains('field');
+        print(userRole);
+        if (!isFieldAgent) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Only Field Agents can alter Intelligence Reports"),
+            ),
+          );
+          return;
+        }
+
         if (selected) {
           provider.updateEdgeCondition(edge.id, label);
         }

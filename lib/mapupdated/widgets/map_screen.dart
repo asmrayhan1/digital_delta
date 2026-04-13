@@ -6,8 +6,9 @@ import '../providers/map_provider.dart';
 class MapScreen extends StatefulWidget {
   final MapProvider provider;
   final String rawJson;
+  final String userRole;
 
-  const MapScreen({super.key, required this.provider, required this.rawJson});
+  const MapScreen({super.key, required this.provider, required this.rawJson, required this.userRole});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -85,7 +86,7 @@ class _MapScreenState extends State<MapScreen> {
           showDialog(
             context: context,
             barrierColor: Colors.black45,
-            builder: (context) => TopReportDialog(provider: widget.provider),
+            builder: (context) => TopReportDialog(provider: widget.provider, userRole: widget.userRole),
           );
         },
       ),
