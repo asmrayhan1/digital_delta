@@ -1,6 +1,7 @@
 import 'package:digital_delta/core/services/auth_service.dart';
 import 'package:digital_delta/features/auth/screens/otp_screen.dart';
 import 'package:digital_delta/features/auth/screens/register_screen.dart';
+import 'package:digital_delta/features/bottom_navigation/screens/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -39,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (isValid) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => OtpScreen(mobile: mobile)),
+            MaterialPageRoute(builder: (_) => MainNavigationScreen(mobile: mobile)),// OtpScreen(mobile: mobile)),
           );
         } else {
           ScaffoldMessenger.of(

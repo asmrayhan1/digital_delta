@@ -1,14 +1,15 @@
 import 'package:digital_delta/core/services/mesh_service.dart';
 import 'package:digital_delta/features/mesh/screens/mesh_dashboard_screen.dart';
 import 'package:digital_delta/mapupdated/data/sylhet_map_data.dart';
-import 'package:digital_delta/mapupdated/providers/map_provider.dart';
-import 'package:digital_delta/mapupdated/widgets/map_screen.dart';
+import 'package:digital_delta/features/recover_rescue/screens/recover_rescue_screen.dart';
+import 'package:digital_delta/map/services/map_provider.dart' hide MapProvider;
+import 'package:digital_delta/map/visuals/map_screen.dart' hide MapScreen;
 import 'package:flutter/material.dart';
-
-import '../../assets/screens/assets_screen.dart';
 import '../../dashboard/dashboard_screen.dart';
 import '../../profile/screens/profile_screen.dart';
-import '../../sync/screens/sync_screen.dart';
+import 'package:digital_delta/mapupdated/data/sylhet_map_data.dart';
+import 'package:digital_delta/mapupdated/providers/map_provider.dart';
+import 'package:digital_delta/mapupdated/widgets/map_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   final String mobile;
@@ -27,7 +28,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Create the manager instance once
     meshManager = MeshSyncManager(
       userId: widget.mobile,
@@ -37,7 +38,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     // Initialize screens with the persistent manager
     screens = [
       const DashboardScreen(),
-      const AssetsScreen(),
+      const RecoveryRescueScreen(),
       MapScreen(provider: MapProvider(), rawJson: SylhetMapData.jsonString),
       MeshDashboardScreen(meshManager: meshManager), // Pass the manager here
       const ProfileScreen(),

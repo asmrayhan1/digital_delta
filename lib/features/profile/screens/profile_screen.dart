@@ -69,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
                           child: const CircleAvatar(
                             radius: 45,
                             backgroundImage: NetworkImage(
-                              "https://i.pravatar.cc/150?img=3",
+                              "https://static.vecteezy.com/system/resources/thumbnails/014/194/219/small/businessman-manager-boss-man-an-office-worker-illustration-flat-design-vector.jpg",
                             ),
                           ),
                         ),

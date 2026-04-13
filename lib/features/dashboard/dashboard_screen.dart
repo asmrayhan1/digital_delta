@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/material.dart';
-
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
+    final width = MediaQuery.of(context).size.width;
 
     final horizontalPadding = width < 600 ? 16.0 : width * 0.08;
     final maxWidth = 900.0;
@@ -18,7 +15,7 @@ class DashboardScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
+            constraints: const BoxConstraints(maxWidth: 900),
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
@@ -118,29 +115,36 @@ class DashboardScreen extends StatelessWidget {
 
                         const SizedBox(height: 16),
 
+                        /// MAP IMAGE
                         Container(
                           height: width < 400 ? 120 : 140,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius:
+                            BorderRadius.circular(16),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius:
+                            BorderRadius.circular(16),
                             child: Image.network(
                               "https://images.unsplash.com/photo-1524666041070-9d87656c25bb",
                               fit: BoxFit.cover,
 
-                              /// ✅ LOADING
-                              loadingBuilder: (context, child, progress) {
-                                if (progress == null) return child;
-                                return const Center(child: CircularProgressIndicator());
+                              loadingBuilder:
+                                  (context, child, progress) {
+                                if (progress == null)
+                                  return child;
+                                return const Center(
+                                    child:
+                                    CircularProgressIndicator());
                               },
 
-                              /// ✅ ERROR (VERY IMPORTANT)
-                              errorBuilder: (context, error, stackTrace) {
+                              errorBuilder:
+                                  (context, error, stackTrace) {
                                 return Container(
                                   color: Colors.grey[300],
                                   child: const Center(
-                                    child: Icon(Icons.image_not_supported, size: 40),
+                                    child: Icon(
+                                        Icons.image_not_supported),
                                   ),
                                 );
                               },
@@ -212,6 +216,55 @@ class DashboardScreen extends StatelessWidget {
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Supply Status",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight:
+                                      FontWeight.bold),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  "Aggregate inventory levels",
+                                  style: TextStyle(
+                                      color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              padding:
+                              const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                    0xFFE6F4F1),
+                                borderRadius:
+                                BorderRadius.circular(
+                                    20),
+                              ),
+                              child: const Text(
+                                "MEDIUM",
+                                style: TextStyle(
+                                  color:
+                                  Color(0xFF2EC4B6),
+                                  fontSize: 11,
+                                  fontWeight:
+                                  FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
                         _supplyRow("MEDICAL", 0.64),
                         const SizedBox(height: 16),
                         _supplyRow("WATER", 0.42),
@@ -223,38 +276,88 @@ class DashboardScreen extends StatelessWidget {
 
                   /// NODE STATUS
                   _responsiveCard(
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
                       children: [
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              Text("18",
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Node Status",
                                   style: TextStyle(
-                                      fontSize: 28,
+                                      fontSize: 18,
                                       fontWeight:
-                                      FontWeight.bold)),
-                              Text("ACTIVE NODES"),
-                            ],
-                          ),
+                                      FontWeight.bold),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  "Mesh network connectivity",
+                                  style: TextStyle(
+                                      color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              padding:
+                              const EdgeInsets.all(10),
+                              decoration:
+                              const BoxDecoration(
+                                color: Color(0xFFE6F4F1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.hub,
+                                color:
+                                Color(0xFF2EC4B6),
+                              ),
+                            ),
+                          ],
                         ),
-                        Container(
-                          height: 40,
-                          width: 1,
-                          color: Colors.grey[300],
-                        ),
-                        const Expanded(
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.warning,
-                                  color: Colors.red),
-                              SizedBox(width: 6),
-                              Text("2"),
-                            ],
-                          ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment
+                                    .start,
+                                children: [
+                                  Text("18",
+                                      style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight:
+                                          FontWeight
+                                              .bold)),
+                                  Text("ACTIVE NODES"),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 40,
+                              width: 1,
+                              color: Colors.grey,
+                            ),
+                            const Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment
+                                    .center,
+                                children: [
+                                  Icon(Icons.warning,
+                                      color:
+                                      Colors.red),
+                                  SizedBox(width: 6),
+                                  Text("2"),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -270,12 +373,10 @@ class DashboardScreen extends StatelessWidget {
 }
 
 ////////////////////////////////////////////////////////////
-/// CARD
+/// HELPERS
 ////////////////////////////////////////////////////////////
-Widget _responsiveCard({
-  required Widget child,
-  bool dark = false,
-}) {
+
+Widget _responsiveCard({required Widget child, bool dark = false}) {
   return Container(
     width: double.infinity,
     padding: const EdgeInsets.all(20),
@@ -287,9 +388,6 @@ Widget _responsiveCard({
   );
 }
 
-////////////////////////////////////////////////////////////
-/// ICON BOX
-////////////////////////////////////////////////////////////
 class _iconBox extends StatelessWidget {
   final IconData icon;
   const _iconBox(this.icon);
@@ -307,9 +405,6 @@ class _iconBox extends StatelessWidget {
   }
 }
 
-////////////////////////////////////////////////////////////
-/// STATUS TILE
-////////////////////////////////////////////////////////////
 Widget _statusTile({
   required Color color,
   required IconData icon,
@@ -332,10 +427,9 @@ Widget _statusTile({
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 12)),
+            Text(title),
             Text(value,
                 style: const TextStyle(
-                    fontSize: 18,
                     fontWeight: FontWeight.bold)),
           ],
         )
@@ -344,9 +438,6 @@ Widget _statusTile({
   );
 }
 
-////////////////////////////////////////////////////////////
-/// ALERT BOX
-////////////////////////////////////////////////////////////
 Widget _alertBox({
   required String title,
   required String subtitle,
@@ -363,8 +454,7 @@ Widget _alertBox({
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: TextStyle(color: color, fontSize: 12)),
+        Text(title, style: TextStyle(color: color)),
         const SizedBox(height: 6),
         Text(subtitle,
             style: const TextStyle(
@@ -377,34 +467,27 @@ Widget _alertBox({
   );
 }
 
-////////////////////////////////////////////////////////////
-/// SUPPLY ROW
-////////////////////////////////////////////////////////////
 Widget _supplyRow(String label, double value) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment:
+        MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: const TextStyle(
-                  fontWeight: FontWeight.w600)),
+          Text(label),
           Text("${(value * 100).toInt()}%",
               style: const TextStyle(
                   color: Color(0xFF2EC4B6))),
         ],
       ),
       const SizedBox(height: 6),
-      ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: LinearProgressIndicator(
-          value: value,
-          minHeight: 6,
-          backgroundColor: const Color(0xFFE5E7EB),
-          valueColor: const AlwaysStoppedAnimation(
-              Color(0xFF2EC4B6)),
-        ),
+      LinearProgressIndicator(
+        value: value,
+        minHeight: 6,
+        backgroundColor: const Color(0xFFE5E7EB),
+        valueColor: const AlwaysStoppedAnimation(
+            Color(0xFF2EC4B6)),
       ),
     ],
   );
