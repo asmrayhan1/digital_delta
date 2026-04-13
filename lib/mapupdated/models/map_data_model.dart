@@ -21,8 +21,17 @@ class MapEdge {
   final String type;
   final int baseWeight;
   bool isFlooded;
-  bool isCollapsed; // NEW: Added for the "Collapsed" state
+  bool isCollapsed;
   int lastUpdated;
+
+  final double elevation; // In meters
+  double currentRain = 0.0;
+  double cumulativeRain = 0.0;
+  double saturation = 0.0;
+  double healthScore = 1.0;
+
+  /// 0–1 from TFLite (or heuristic): likelihood road condition worsens for current rain.
+  double mlFloodRisk = 0.0;
 
   MapEdge({
     required this.id,
@@ -31,8 +40,9 @@ class MapEdge {
     required this.type,
     required this.baseWeight,
     required this.isFlooded,
-    required this.isCollapsed, // NEW
+    required this.isCollapsed,
     required this.lastUpdated,
+    this.elevation = 5.0,
   });
 
   factory MapEdge.fromJson(Map<String, dynamic> json) => MapEdge(
@@ -42,8 +52,10 @@ class MapEdge {
         type: json['type'] ?? 'road',
         baseWeight: json['base_weight_mins'] ?? 0,
         isFlooded: json['is_flooded'] ?? false,
-        isCollapsed: json['is_collapsed'] ?? false, // NEW
-        lastUpdated: json['last_updated_ms'] ?? DateTime.now().millisecondsSinceEpoch,
+        isCollapsed: json['is_collapsed'] ?? false,
+        // FIX: Default to 0 if not present, so local/mesh updates (with real timestamps) always win
+        lastUpdated: json['last_updated_ms'] ?? 0,
+        elevation: (json['elevation'] ?? 5.0).toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -53,7 +65,7 @@ class MapEdge {
         'type': type,
         'base_weight_mins': baseWeight,
         'is_flooded': isFlooded,
-        'is_collapsed': isCollapsed, // NEW
+        'is_collapsed': isCollapsed,
         'last_updated_ms': lastUpdated,
       };
 }

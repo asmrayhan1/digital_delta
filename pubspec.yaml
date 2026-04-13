@@ -50,6 +50,9 @@ dependencies:
   permission_handler: ^11.4.0
   device_info_plus: ^12.4.0
   shared_preferences: ^2.5.5
+  location: ^5.0.0
+  tflite_flutter: ^0.12.1
+
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +75,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/decay_model.tflite
 
   # To add assets to your application, add an assets section, like this:
   # assets:

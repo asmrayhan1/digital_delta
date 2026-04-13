@@ -1,84 +1,116 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:digital_delta/mapupdated/services/permission_service.dart';
+import 'package:location/location.dart' as loc;
 import 'package:nearby_connections/nearby_connections.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../models/map_data_model.dart';
 import '../providers/map_provider.dart';
 
 class BluetoothMeshService {
   final MapProvider provider;
-  final Strategy strategy = Strategy.P2P_CLUSTER; // Supports M-to-N connections
-  final String serviceId = "com.digital_delta.mesh"; // Unique ID for your app
+  final Strategy strategy = Strategy.P2P_CLUSTER;
+  final String serviceId =
+      "com.digital_delta.sylhet_mesh"; // Ensure this is unique
 
   BluetoothMeshService(this.provider);
 
-  // 1. Start the Mesh (Both Advertise and Discover)
   Future<void> startMesh() async {
-    String userName = "User_${DateTime.now().millisecond}";
+    String userName = "Responder_${DateTime.now().millisecond}";
 
-    // Start Advertising (Being found)
+    // 1. Ensure permissions are granted first
+  bool hasPermissions = await PermissionService.requestMeshPermissions();
+  if (!hasPermissions) {
+    print("Mesh cannot start: Permissions denied.");
+    return;
+  }
+
+  // 2. Check and Enable Location Service (GPS)
+  loc.Location location = loc.Location();
+  bool isLocationServiceEnabled = await location.serviceEnabled();
+  if (!isLocationServiceEnabled) {
+    isLocationServiceEnabled = await location.requestService();
+    if (!isLocationServiceEnabled) return; // User refused to turn on GPS
+  }
+
+  // 3. Check Bluetooth Service
+  // Note: permission_handler can check if it's on, but on Android, 
+  // Nearby().startAdvertising() usually triggers the system Bluetooth prompt automatically.
+  bool isBluetoothEnabled = await Permission.bluetooth.serviceStatus.isEnabled;
+  if (!isBluetoothEnabled) {
+    print("Bluetooth is OFF. Attempting to start advertising will prompt user...");
+  }
+
     try {
+      // 1. Start Advertising
       await Nearby().startAdvertising(
         userName,
         strategy,
         onConnectionInitiated: _onConnectionInitiated,
-        onConnectionResult: (id, status) => print("Adv Result: $status"),
-        onDisconnected: (id) => print("Disconnected: $id"),
+        onConnectionResult: (id, status) => print("Connection Result: $status"),
+        onDisconnected: (id) => print("Disconnected from: $id"),
         serviceId: serviceId,
       );
 
-      // Start Discovery (Finding others)
+      // 2. Start Discovery
       await Nearby().startDiscovery(
         userName,
         strategy,
-        onEndpointFound: (id, name, serviceId) {
-          // When a peer is found, request a connection immediately
-          Nearby().requestConnection(userName, id,
-              onConnectionInitiated: _onConnectionInitiated,
-              onConnectionResult: (id, status) => print("Disc Result: $status"),
-              onDisconnected: (id) => print("Disconnected: $id"));
+        onEndpointFound: (id, name, sid) {
+          Nearby().requestConnection(
+            userName,
+            id,
+            onConnectionInitiated: _onConnectionInitiated,
+            onConnectionResult: (id, status) =>
+                print("Discovery Result: $status"),
+            onDisconnected: (id) => print("Disconnected: $id"),
+          );
         },
-        onEndpointLost: (id) => print("Endpoint lost: $id"),
+        onEndpointLost: (id) => print("Peer lost: $id"),
         serviceId: serviceId,
       );
     } catch (e) {
-      print("Mesh Start Error: $e");
+      print("Bluetooth Start Error: $e");
     }
   }
 
-  // 2. The "Handshake" Logic
   void _onConnectionInitiated(String id, ConnectionInfo info) {
-    // In a disaster, we trust other app users. Accept immediately.
+    // FIX: Explicitly accept on both sides and set up the listener
     Nearby().acceptConnection(
       id,
       onPayLoadRecieved: (endpointId, payload) {
         if (payload.type == PayloadType.BYTES) {
-          _handleIncomingData(payload.bytes!);
+          // FIX: Use utf8 decode for cross-platform safety
+          final String rawData = utf8.decode(payload.bytes!);
+          _handleIncomingData(rawData);
         }
       },
     );
-    
-    // Once connected, immediately send our current map state to the new peer
+    // Send our state immediately after accepting
     _sendMapState(id);
   }
 
-  // 3. The "Gossip" - Sending Data
   void _sendMapState(String endpointId) {
-    // We only send the edges (their flooded/collapsed status and timestamps)
     final String data = json.encode(
       provider.edges.map((e) => e.toJson()).toList(),
     );
-    Nearby().sendBytesPayload(endpointId, Uint8List.fromList(data.codeUnits));
+    // FIX: Use utf8 encode
+    Nearby().sendBytesPayload(
+      endpointId,
+      Uint8List.fromList(utf8.encode(data)),
+    );
   }
 
-  // 4. The Conflict Resolution (Last-Write-Wins)
-  void _handleIncomingData(Uint8List bytes) {
-    final String rawData = String.fromCharCodes(bytes);
-    final List<dynamic> decodedData = json.decode(rawData);
-    
-    List<MapEdge> incomingEdges = decodedData.map((e) => MapEdge.fromJson(e)).toList();
-
-    // Pass this data to the provider to merge
-    provider.syncMeshUpdates(incomingEdges);
+  void _handleIncomingData(String rawData) {
+    try {
+      final List<dynamic> decodedData = json.decode(rawData);
+      final List<MapEdge> incomingEdges = decodedData
+          .map((item) => MapEdge.fromJson(item as Map<String, dynamic>))
+          .toList();
+      provider.syncMeshUpdates(incomingEdges);
+    } catch (e) {
+      print("Data Sync Error: $e");
+    }
   }
 
   void stopMesh() {

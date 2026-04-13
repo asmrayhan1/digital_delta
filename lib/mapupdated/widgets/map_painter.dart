@@ -7,8 +7,14 @@ class MapPainter extends CustomPainter {
   final List<MapNode> nodes;
   final List<MapEdge> edges;
   final PathResult? pathResult;
+  final double rainIntensity;
 
-  MapPainter({required this.nodes, required this.edges, this.pathResult});
+  MapPainter({
+    required this.nodes,
+    required this.edges,
+    this.pathResult,
+    this.rainIntensity = 0.0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -29,7 +35,7 @@ class MapPainter extends CustomPainter {
       return Offset((x * w) + padding, (y * h) + padding);
     }
 
-    // 1. Draw All Background Edges
+    // 1. Draw All Background Edges (Including ML Predictions)
     for (var edge in edges) {
       final n1 = nodes.firstWhere((n) => n.id == edge.source);
       final n2 = nodes.firstWhere((n) => n.id == edge.target);
@@ -37,39 +43,65 @@ class MapPainter extends CustomPainter {
       final p2 = project(n2.lat, n2.lng);
 
       final paint = Paint()
-        ..strokeWidth = 2.0
+        ..strokeWidth = 2.5
         ..style = PaintingStyle.stroke;
 
+      // --- ML PREDICTION VISUALIZATION LOGIC ---
+      
       if (edge.isCollapsed) {
-        paint.color = Colors.red;
+        paint.color = Colors.red[900]!;
         paint.strokeWidth = 4.0;
-        // Visualizing a "Broken" road with a bold red line
         canvas.drawLine(p1, p2, paint);
-      } else if (edge.isFlooded) {
-        paint.color = Colors.blue.withOpacity(0.5); // Flooded road
-        _drawDashedLine(canvas, p1, p2, paint);
-      } else if (edge.type == 'river') {
-        paint.color = Colors.blue[200]!; // Natural river
+      } 
+      else if (edge.type == 'river') {
+        paint.color = Colors.blue[200]!;
         canvas.drawLine(p1, p2, paint);
-      } else {
-        paint.color = Colors.grey[300]!; // Normal road
-        canvas.drawLine(p1, p2, paint);
+      } 
+      else {
+        final showMl =
+            rainIntensity > 0.02 && edge.mlFloodRisk > 0.04;
+
+        if (showMl) {
+          // ML: green (safe) → amber → red (high decay), scaled by risk × rain
+          final intensity = (edge.mlFloodRisk * (0.2 + 0.8 * rainIntensity))
+              .clamp(0.0, 1.0);
+          paint.color = _mlRiskColor(intensity);
+          paint.strokeWidth = 2.5 + 5.0 * intensity;
+          if (intensity > 0.55) {
+            _drawDashedLine(canvas, p1, p2, paint);
+          } else {
+            canvas.drawLine(p1, p2, paint);
+          }
+        } else if (edge.healthScore < 1.0) {
+          paint.color = Color.lerp(
+            Colors.red,
+            Colors.green,
+            edge.healthScore,
+          )!;
+          paint.strokeWidth = 3.5;
+
+          if (edge.healthScore < 0.4) {
+            _drawDashedLine(canvas, p1, p2, paint);
+          } else {
+            canvas.drawLine(p1, p2, paint);
+          }
+        } else {
+          paint.color = Colors.grey[300]!;
+          canvas.drawLine(p1, p2, paint);
+        }
       }
     }
 
-    // 2. Draw the Calculated Path with Multi-Modal Colors
+    // 2. Draw the Calculated Path
     if (pathResult != null && pathResult!.nodeIds.isNotEmpty) {
       final pathPaint = Paint()
-        ..strokeWidth = 5.0
+        ..strokeWidth = 6.0
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
 
-      // Color based on Mode
-      if (pathResult!.travelMode == "BOAT") {
-        pathPaint.color = Colors.blueAccent;
-      } else {
-        pathPaint.color = Colors.greenAccent[700]!;
-      }
+      pathPaint.color = pathResult!.travelMode == "BOAT" 
+          ? Colors.blueAccent 
+          : Colors.greenAccent[700]!;
 
       for (int i = 0; i < pathResult!.nodeIds.length - 1; i++) {
         final u = nodes.firstWhere((n) => n.id == pathResult!.nodeIds[i]);
@@ -85,22 +117,39 @@ class MapPainter extends CustomPainter {
     // 3. Draw Nodes and Labels
     for (var node in nodes) {
       final pos = project(node.lat, node.lng);
-      canvas.drawCircle(pos, 5, Paint()..color = Colors.black);
+      canvas.drawCircle(pos, 4, Paint()..color = Colors.black);
 
       TextPainter(
           text: TextSpan(
             text: node.name,
             style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
+              color: Colors.black54,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
             ),
           ),
           textDirection: TextDirection.ltr,
         )
         ..layout()
-        ..paint(canvas, pos + const Offset(8, -12));
+        ..paint(canvas, pos + const Offset(6, -10));
     }
+  }
+
+  /// [t] 0 = normal (green), 1 = high predicted decay (red).
+  Color _mlRiskColor(double t) {
+    final x = t.clamp(0.0, 1.0);
+    if (x <= 0.5) {
+      return Color.lerp(
+        const Color.fromARGB(255, 249, 246, 68),
+        const Color.fromARGB(255, 250, 155, 3),
+        x * 2.0,
+      )!;
+    }
+    return Color.lerp(
+      const Color.fromARGB(255, 254, 156, 0),
+      const Color.fromARGB(255, 255, 36, 36),
+      (x - 0.5) * 2.0,
+    )!;
   }
 
   void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint) {

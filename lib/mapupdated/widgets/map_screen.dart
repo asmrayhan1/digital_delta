@@ -20,7 +20,14 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    widget.provider.initializeMap(widget.rawJson);
+    _initializeData();
+  }
+
+  // Wrapper to load map and then start the ML decay simulation
+  Future<void> _initializeData() async {
+    await widget.provider.initializeMap(widget.rawJson);
+    // Start the timer-based ML decay loop
+    widget.provider.startDecaySimulation();
   }
 
   @override
@@ -32,9 +39,7 @@ class _MapScreenState extends State<MapScreen> {
         elevation: 2,
         backgroundColor: Colors.blueGrey[900],
         foregroundColor: Colors.white,
-        actions: [
-          _buildMeshToggle(), // The New Mesh Controller
-        ],
+        actions: [_buildMeshToggle()],
       ),
       body: ListenableBuilder(
         listenable: widget.provider,
@@ -43,9 +48,8 @@ class _MapScreenState extends State<MapScreen> {
 
           return Column(
             children: [
-              _buildMeshStatusIndicator(), // Status sub-header
+              _buildMeshStatusIndicator(),
               if (res != null) _buildStatusBanner(res.travelMode),
-
               Expanded(
                 child: Container(
                   color: Colors.blueGrey[50],
@@ -62,14 +66,14 @@ class _MapScreenState extends State<MapScreen> {
                           nodes: widget.provider.nodes,
                           edges: widget.provider.edges,
                           pathResult: res,
+                          rainIntensity: widget.provider.globalRainIntensity,
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-
-              _buildControls(),
+              _buildControls(), // Contains the new ML simulation slider
             ],
           );
         },
@@ -125,48 +129,33 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildStatusBanner(String mode) {
     Color color = Colors.green;
-
     String text = "Route Clear: Vehicles Supported";
-
     IconData icon = Icons.check_circle_outline;
 
     if (mode == "BOAT") {
       color = Colors.blue;
-
       text = "Route Flooded: Boat Required";
-
       icon = Icons.directions_boat_filled;
     } else if (mode == "DRONE") {
       color = Colors.deepOrange;
-
       text = "Route Collapsed: Drone Only";
-
       icon = Icons.precision_manufacturing_outlined;
     }
 
     return Container(
       width: double.infinity,
-
       color: color,
-
       padding: const EdgeInsets.symmetric(vertical: 10),
-
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-
         children: [
           Icon(icon, color: Colors.white, size: 20),
-
           const SizedBox(width: 12),
-
           Text(
             text.toUpperCase(),
-
             style: const TextStyle(
               color: Colors.white,
-
               fontWeight: FontWeight.bold,
-
               letterSpacing: 1.1,
             ),
           ),
@@ -177,34 +166,67 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildControls() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-
             blurRadius: 10,
-
             offset: const Offset(0, -2),
           ),
         ],
       ),
-
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Using Flexible instead of Expanded to give the Row more breathing room
-          Flexible(child: _cityDropdown(true)),
-
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4),
-
-            child: Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+          // ML SIMULATION SLIDER
+          Row(
+            children: [
+              const Icon(Icons.umbrella, size: 18, color: Colors.blueAccent),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Rainfall Intensity: ${(widget.provider.globalRainIntensity * 100).toInt()}%",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Slider(
+                      value: widget.provider.globalRainIntensity,
+                      min: 0.0,
+                      max: 1.0,
+                      activeColor: Colors.blueAccent,
+                      onChanged: (val) {
+                        widget.provider.globalRainIntensity = val;
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-
-          Flexible(child: _cityDropdown(false)),
+          const Divider(),
+          // SOURCE AND DESTINATION DROPDOWNS
+          Row(
+            children: [
+              Flexible(child: _cityDropdown(true)),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              Flexible(child: _cityDropdown(false)),
+            ],
+          ),
         ],
       ),
     );
@@ -212,41 +234,28 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _cityDropdown(bool isStart) {
     return DropdownButtonFormField<String>(
-      // CRITICAL: This prevents the internal Row from overflowing
       isExpanded: true,
-
       decoration: InputDecoration(
         labelText: isStart ? "Source" : "Dest",
-
         labelStyle: const TextStyle(fontSize: 12),
-
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       ),
-
       value: isStart
           ? widget.provider.selectedStart
           : widget.provider.selectedEnd,
-
-      // We use a smaller font and ellipsis to handle long Sylhet location names
       items: widget.provider.nodes.map((n) {
         return DropdownMenuItem(
           value: n.id,
-
           child: Text(
             n.name,
-
             overflow: TextOverflow.ellipsis,
-
             style: const TextStyle(fontSize: 12),
           ),
         );
       }).toList(),
-
       onChanged: (val) => widget.provider.setPoints(
         isStart ? val : widget.provider.selectedStart,
-
         isStart ? widget.provider.selectedEnd : val,
       ),
     );
