@@ -4,6 +4,7 @@ import 'package:cryptography/cryptography.dart';
 import 'package:digital_delta/data/local/db_helper.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:otp/otp.dart';
+import 'package:digital_delta/core/services/supabase_service.dart';
 
 class AuthService {
   final _storage = const FlutterSecureStorage();
@@ -54,9 +55,15 @@ class AuthService {
         'mobile': mobile,
         'role': role,
         'public_key': publicKey,
+        'is_synced': 0,
+        'created_at': DateTime.now().millisecondsSinceEpoch,
       });
 
       await logEvent("REGISTER_SUCCESS_$user");
+      
+      // Trigger sync logic (works immediately if online)
+      SupabaseService().syncPendingUsers();
+      
       return null;
     } catch (e) {
       // Check if the error is a Unique Constraint violation

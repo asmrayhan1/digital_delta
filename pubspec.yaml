@@ -52,6 +52,8 @@ dependencies:
   shared_preferences: ^2.5.5
   location: ^5.0.0
   tflite_flutter: ^0.12.1
+  supabase_flutter: ^2.12.2
+  connectivity_plus: ^7.1.1
 
 
 dev_dependencies:

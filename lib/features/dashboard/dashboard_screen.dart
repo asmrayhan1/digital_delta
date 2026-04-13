@@ -41,10 +41,6 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const Text(
-                        "SYNCING • 2M AGO",
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
                     ],
                   ),
 

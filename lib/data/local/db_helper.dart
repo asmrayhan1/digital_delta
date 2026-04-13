@@ -10,7 +10,7 @@ class DbHelper {
     String path = join(await getDatabasesPath(), 'hackathon_auth.db');
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 3) {
           // Drop and recreate everything on major schema change
@@ -26,6 +26,9 @@ class DbHelper {
           await db.execute("DROP TABLE IF EXISTS relay_queue");
           await db.execute("DROP TABLE IF EXISTS mesh_events_log");
           await _createTables(db);
+        }
+        if (oldVersion == 3 && newVersion >= 4) {
+          await db.execute("ALTER TABLE users ADD COLUMN is_synced INTEGER DEFAULT 0");
         }
       },
       onCreate: (db, version) async {
@@ -43,6 +46,7 @@ class DbHelper {
         mobile TEXT UNIQUE,
         role TEXT,
         public_key TEXT,
+        is_synced INTEGER DEFAULT 0,
         created_at INTEGER
       )
     ''');
