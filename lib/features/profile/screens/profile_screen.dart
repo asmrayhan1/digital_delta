@@ -1,3 +1,4 @@
+import 'package:digital_delta/features/auth/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -226,11 +227,13 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  onPressed: () {},
-                  child: const Text(
-                    "Logout from Terminal",
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                  },
+                  child: const Text("Logout", style: TextStyle(fontSize: 16)),
                 ),
               ),
 

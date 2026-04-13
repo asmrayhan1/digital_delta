@@ -69,10 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              content: Text(errorMessage),
-            ),
+            SnackBar(backgroundColor: Colors.red, content: Text(errorMessage)),
           );
         }
       }
@@ -114,78 +111,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 16),
 
               /// HERO CARD
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0B1F33), Color(0xFF102A43)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// BADGE
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1C3D5A),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        "SECURE INFRASTRUCTURE",
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    /// TITLE
-                    const Text(
-                      "Command the",
-                      style: TextStyle(color: Colors.white, fontSize: 26),
-                    ),
-
-                    const Text(
-                      "Tactical Edge.",
-                      style: TextStyle(
-                        color: Color(0xFF2EC4B6),
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    /// DESCRIPTION
-                    const Text(
-                      "Join the next generation of disaster logistics. "
-                      "Real-time data, verified security, and absolute reliability "
-                      "for mission-critical operations.",
-                      style: TextStyle(color: Colors.white70, height: 1.5),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    /// STATS
-                    Row(
-                      children: const [
-                        _StatItem(title: "256-bit", subtitle: "AES ENCRYPTION"),
-                        SizedBox(width: 24),
-                        _StatItem(title: "99.9%", subtitle: "MISSION UPTIME"),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
 
               /// FORM CARD
               Container(
@@ -305,27 +230,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: Colors.white,
                                 ),
                               ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    /// BUTTON
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0B1F33),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: debugPrintUsers,
-                        child: const Text(
-                          "Print Admin Data",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
                       ),
                     ),
 

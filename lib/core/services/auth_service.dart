@@ -78,7 +78,7 @@ class AuthService {
     return success;
   }
 
-  Future<bool> verifyOTP(
+    Future<bool> verifyOTP(
     String mobile,
     String expected,
     String inputOtp,
@@ -88,6 +88,20 @@ class AuthService {
     bool success = expected == inputOtp;
     await logEvent(success ? "OTP_SUCCESS_$mobile" : "OTP_FAIL_$mobile");
     return success;
+  }
+
+  Future<String?> getUserRole(String mobile) async {
+    final db = await _dbHelper.db;
+    final List<Map<String, dynamic>> result = await db.query(
+      'users',
+      columns: ['role'],
+      where: 'mobile = ?',
+      whereArgs: [mobile],
+    );
+    if (result.isNotEmpty) {
+      return result.first['role'] as String?;
+    }
+    return null;
   }
 
   // M1.4: Hash Chaining for Immutable Logs

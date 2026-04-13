@@ -40,7 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (isValid) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => MainNavigationScreen(mobile: mobile)),// OtpScreen(mobile: mobile)),
+            // MaterialPageRoute(builder: (_) => MainNavigationScreen(mobile: mobile))
+            MaterialPageRoute(builder: (_) => OtpScreen(mobile: mobile)),
           );
         } else {
           ScaffoldMessenger.of(
