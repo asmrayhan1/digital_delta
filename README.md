@@ -1,11 +1,11 @@
-# 🌊 Digital Delta
+# Digital Delta
 
 > **Hackathon Project** by Team **LU_Furious**  
 > A disaster-resilient, offline-first Flutter application for flood-zone relief coordination in Bangladesh.
 
 ---
 
-## 📌 Overview
+## Overview
 
 **Digital Delta** is a peer-to-peer mesh networking application designed to operate in connectivity-degraded environments — exactly the conditions faced during floods in low-lying delta regions. It enables rescue teams, volunteers, and affected communities to communicate, coordinate supply logistics, and share real-time situational data **without relying on internet infrastructure**.
 
@@ -15,7 +15,7 @@ The app uses **Bluetooth/Wi-Fi Direct mesh networking** (via Google Nearby Conne
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 | Feature | Description |
 |---|---|
@@ -31,7 +31,7 @@ The app uses **Bluetooth/Wi-Fi Direct mesh networking** (via Google Nearby Conne
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
 See the [Architecture Diagram](#-architecture-diagram-structure) section below for the full layered diagram description.
 
@@ -98,7 +98,7 @@ Available at /docs folder in the root directory.
 
 ---
 
-## 🗃 Database Schema
+## Database Schema
 
 Digital Delta uses **SQLite (sqflite)** with a 10-table schema (v3):
 
@@ -118,7 +118,7 @@ Digital Delta uses **SQLite (sqflite)** with a 10-table schema (v3):
 
 ---
 
-## 🛠 Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 
@@ -229,7 +229,7 @@ flutter devices
 
 ---
 
-## 📡 Architecture Diagram Structure
+## Architecture Diagram Structure
 
 > The following is a description for manual illustration. Use this as your reference to draw the architecture diagram.
 
@@ -326,7 +326,7 @@ Device A                              Device B
 
 ---
 
-## 📦 Key Dependencies
+## Key Dependencies
 
 | Package | Purpose |
 |---|---|
@@ -343,12 +343,18 @@ Device A                              Device B
 
 ---
 
-## 👥 Team
+## Team
 
-**LU_Furious** — Hackathon 2026
+**LU_Furious** — Leading University, Sylhet
+
+| Name | GitHub | LinkedIn |
+|------|--------|----------|
+| Abidur Rahman | [abidurrahman11](https://github.com/abidurrahman11) | [abidurrahman11](https://www.linkedin.com/in/abidurrahman11) |
+| A S M Rayhan Chowdhury | [asmrayhan1](https://github.com/asmrayhan1) | [asmrayhan](https://www.linkedin.com/in/asmrayhan) |
+| Binoy Bhushan Barman Dipu | [binoydipu](https://github.com/binoydipu) | [binoydipu](https://www.linkedin.com/in/binoydipu) |
 
 ---
 
-## 📄 License
+## License
 
 This project was developed during a hackathon. All rights reserved by Team LU_Furious.
