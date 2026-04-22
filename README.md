@@ -1,7 +1,9 @@
 # Digital Delta
 
-> **Hackathon Project** by Team **LU_Furious**  
-> A disaster-resilient, offline-first Flutter application for flood-zone relief coordination in Bangladesh.
+> **Hackathon Project** by Team **LU_Furious**
+> **Event:** INNONATION Inter-University National Hackathon, HACKFUSION 2026
+
+> A disaster-resilient, offline-first Mobile application for flood-zone relief coordination in Bangladesh.
 
 ---
 
