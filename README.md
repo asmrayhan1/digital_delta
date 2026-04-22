@@ -1,9 +1,27 @@
 # Digital Delta
 
-> **Hackathon Project** by Team **LU_Furious**
-> **Event:** INNONATION Inter-University National Hackathon, HACKFUSION 2026
+<div align="center">
 
-> A disaster-resilient, offline-first Mobile application for flood-zone relief coordination in Bangladesh.
+[![Hackathon](https://img.shields.io/badge/Hackathon-HACKFUSION%202026-blue)](https://hackfusion.example.com)
+[![Team](https://img.shields.io/badge/Team-LU__Furious-green)](#team)
+[![IEEE](https://img.shields.io/badge/Organized%20by-IEEE%20Computer%20Society-red)](#about-the-event)
+[![Flutter](https://img.shields.io/badge/Built%20with-Flutter-blue)](#prerequisites)
+
+**A disaster-resilient, offline-first Mobile application for flood-zone relief coordination in Bangladesh.**
+
+</div>
+
+---
+
+## About the Event
+
+| Details | Information |
+|---------|-------------|
+| **Event** | HACKFUSION 2026 |
+| **Hackathon** | INNONATION Inter-University National Hackathon |
+| **Organizer** | IEEE Computer Society LU Student Branch Chapter |
+| **Venue** | Leading University, Sylhet |
+| **Team** | LU_Furious |
 
 ---
 
