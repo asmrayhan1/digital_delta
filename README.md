@@ -24,6 +24,17 @@
 | **Team** | LU_Furious |
 
 ---
+## Team
+
+**LU_Furious** — Leading University, Sylhet
+
+| Name | GitHub | LinkedIn |
+|------|--------|----------|
+| Abidur Rahman | [abidurrahman11](https://github.com/abidurrahman11) | [abidurrahman11](https://www.linkedin.com/in/abidurrahman11) |
+| A S M Rayhan Chowdhury | [asmrayhan1](https://github.com/asmrayhan1) | [asmrayhan](https://www.linkedin.com/in/asmrayhan) |
+| Binoy Bhushan Barman Dipu | [binoydipu](https://github.com/binoydipu) | [binoydipu](https://www.linkedin.com/in/binoydipu) |
+
+---
 
 ## Overview
 
@@ -360,18 +371,6 @@ Device A                              Device B
 | `uuid` | UUID generation for entries and messages |
 | `fixnum` | 64-bit integer support for Protobuf timestamps |
 | `path_provider` | File system paths for SQLite |
-
----
-
-## Team
-
-**LU_Furious** — Leading University, Sylhet
-
-| Name | GitHub | LinkedIn |
-|------|--------|----------|
-| Abidur Rahman | [abidurrahman11](https://github.com/abidurrahman11) | [abidurrahman11](https://www.linkedin.com/in/abidurrahman11) |
-| A S M Rayhan Chowdhury | [asmrayhan1](https://github.com/asmrayhan1) | [asmrayhan](https://www.linkedin.com/in/asmrayhan) |
-| Binoy Bhushan Barman Dipu | [binoydipu](https://github.com/binoydipu) | [binoydipu](https://www.linkedin.com/in/binoydipu) |
 
 ---
 
